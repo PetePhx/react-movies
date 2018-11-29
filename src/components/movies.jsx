@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
-import Like from "./common/like";
 import ListGroup from "./common/listGroup";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
+import MoviesTable from "./moviesTable";
 
 class Movies extends Component {
   state = {
@@ -56,8 +56,6 @@ class Movies extends Component {
   };
 
   render() {
-    console.log(this.state.genres);
-
     const len = this.state.movies.length;
     if (len === 0) return <p>There are no movies in the database!</p>;
 
@@ -75,43 +73,12 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <p>Showing {moviesOfGenre.length} movies:</p>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Genre</th>
-                <th>Stock</th>
-                <th>Rate</th>
-                <th />
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {moviesDisplayed.map((movie, idx) => (
-                <tr key={idx}>
-                  <td>{movie.title}</td>
-                  <td>{movie.genre.name}</td>
-                  <td>{movie.numberInStock}</td>
-                  <td>{movie.dailyRentalRate}</td>
-                  <td>
-                    <Like
-                      isLiked={movie.isLiked}
-                      onLike={() => this.handleLike(movie)}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => this.handleDelete(movie)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <MoviesTable
+            moviesOfGenre={moviesOfGenre}
+            moviesDisplayed={moviesDisplayed}
+            onDelete={this.handleDelete}
+            onLike={this.handleLike}
+          />
           <Pagination
             itemsCount={moviesOfGenre.length}
             pageSize={pageSize}
