@@ -12,14 +12,16 @@ class Movies extends Component {
     genres: [],
     pageSize: 4,
     currentPage: 1,
-    currentGenre: "All"
+    selectedGenre: null
   };
 
   componentDidMount() {
     this.setState({
       movies: getMovies(),
-      genres: [{ name: "All" }, ...getGenres()]
+      genres: [{ _id: 0, name: "All Genres" }, ...getGenres()]
     });
+
+    this.setState({ selectedGenre: { _id: 0, name: "All Genres" } });
   }
 
   handleDelete = movie => {
@@ -40,16 +42,17 @@ class Movies extends Component {
     this.setState({ currentPage: pageNum });
   };
 
-  handleGenreSelect = idx => {
+  handleGenreSelect = genre => {
+    const idx = this.state.genres.findIndex(gnr => gnr.name === genre.name);
     this.setState({
-      currentGenre: this.state.genres[idx].name,
+      selectedGenre: this.state.genres[idx],
       currentPage: 1
     });
   };
 
-  filterMoviesByGenre = (movieArr, genreName) => {
-    if (genreName === "All") return movieArr;
-    return movieArr.filter(movie => movie.genre.name === genreName);
+  filterMoviesByGenre = (movieArr, selGenre) => {
+    if (selGenre.name === "All Genres") return movieArr;
+    return movieArr.filter(movie => movie.genre.name === selGenre.name);
   };
 
   render() {
@@ -58,33 +61,21 @@ class Movies extends Component {
     const len = this.state.movies.length;
     if (len === 0) return <p>There are no movies in the database!</p>;
 
-    const { movies, genres, currentPage, pageSize, currentGenre } = this.state;
-    const moviesOfGenre = this.filterMoviesByGenre(movies, currentGenre);
+    const { movies, genres, currentPage, pageSize, selectedGenre } = this.state;
+    const moviesOfGenre = this.filterMoviesByGenre(movies, selectedGenre);
     const moviesDisplayed = paginate(moviesOfGenre, currentPage, pageSize);
 
     return (
       <div className="row">
-        <div className="col-2">
-          <ListGroup items={genres} onItemSelect={this.handleGenreSelect} />
-          <ul className="list-group">
-            {genres.map((genre, idx) => {
-              let className = "list-group-item list-group-item-action";
-              if (genre.name === this.state.currentGenre)
-                className += " active";
-              return (
-                <li
-                  key={idx}
-                  className={className}
-                  onClick={() => this.handleGenreSelect(idx)}
-                >
-                  {genre.name}
-                </li>
-              );
-            })}
-          </ul>
+        <div className="col-3">
+          <ListGroup
+            items={genres}
+            onItemSelect={this.handleGenreSelect}
+            selectedItem={selectedGenre}
+          />
         </div>
-        <div className="co">
-          <p>Showing {len} movies:</p>
+        <div className="col">
+          <p>Showing {moviesOfGenre.length} movies:</p>
           <table className="table">
             <thead>
               <tr>
