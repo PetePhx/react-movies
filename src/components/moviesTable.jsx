@@ -1,18 +1,29 @@
-import React from "react";
+import React, { Component } from "react";
 import Like from "./common/like";
 
-const MoviesTable = props => {
-  const { moviesOfGenre, moviesDisplayed, onDelete, onLike } = props;
-  return (
-    <React.Fragment>
-      <p>Showing {moviesOfGenre.length} movies:</p>
+class MoviesTable extends Component {
+  raiseSort = path => {
+    const order =
+      this.props.sortColumn.path === path
+        ? this.props.sortColumn.order === "asc"
+          ? "desc"
+          : "asc"
+        : "asc";
+    const sortColumn = { path, order };
+    this.props.onSort(sortColumn);
+  };
+
+  render() {
+    const { moviesDisplayed, onDelete, onLike } = this.props;
+
+    return (
       <table className="table">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Stock</th>
-            <th>Rate</th>
+            <th onClick={() => this.raiseSort("title")}>Title</th>
+            <th onClick={() => this.raiseSort("genre.name")}>Genre</th>
+            <th onClick={() => this.raiseSort("numberInStock")}>Stock</th>
+            <th onClick={() => this.raiseSort("dailyRentalRate")}>Rate</th>
             <th />
             <th />
           </tr>
@@ -39,8 +50,8 @@ const MoviesTable = props => {
           ))}
         </tbody>
       </table>
-    </React.Fragment>
-  );
-};
+    );
+  }
+}
 
 export default MoviesTable;
