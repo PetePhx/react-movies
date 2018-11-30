@@ -82,9 +82,6 @@ class Movies extends Component {
   };
 
   render() {
-    const len = this.state.movies.length;
-    if (len === 0) return <p>There are no movies in the database!</p>;
-
     const {
       genres,
       currentPage,
@@ -92,6 +89,9 @@ class Movies extends Component {
       selectedGenre,
       sortColumn
     } = this.state;
+
+    if (this.state.movies.length === 0)
+      return <p>There are no movies in the database!</p>;
 
     const { totalLength, movies } = this.getPagedDate();
 
