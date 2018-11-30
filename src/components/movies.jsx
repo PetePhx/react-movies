@@ -94,7 +94,7 @@ class Movies extends Component {
         <div className="col">
           <p>Showing {moviesSorted.length} movies:</p>
           <MoviesTable
-            moviesDisplayed={moviesDisplayed}
+            movies={moviesDisplayed}
             onDelete={this.handleDelete}
             onLike={this.handleLike}
             onSort={this.handleSort}
