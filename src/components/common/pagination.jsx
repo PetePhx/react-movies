@@ -18,9 +18,12 @@ const Pagination = props => {
                 page === currentPage ? "page-item active" : "page-item"
               }
             >
-              <a className="page-link" onClick={() => onPageChange(page)}>
+              <p
+                className="page-link text-dark"
+                onClick={() => onPageChange(page)}
+              >
                 {page}
-              </a>
+              </p>
             </li>
           );
         })}
