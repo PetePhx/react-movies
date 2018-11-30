@@ -37,22 +37,6 @@ class MoviesTable extends Component {
           onSort={onSort}
         />
         <TableBody data={moviesDisplayed} columns={this.columns} />
-        {/* <tbody>
-          {moviesDisplayed.map((movie, idx) => (
-            <tr key={idx}>
-              <td>{movie.title}</td>
-              <td>{movie.genre.name}</td>
-              <td>{movie.numberInStock}</td>
-              <td>{movie.dailyRentalRate}</td>
-              <td>
-                
-              </td>
-              <td>
-                
-              </td>
-            </tr>
-          ))}
-        </tbody> */}
       </table>
     );
   }
