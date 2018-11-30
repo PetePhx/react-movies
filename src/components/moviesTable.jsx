@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import TableHeader from "./common/tableHeader";
+import TableBody from "./common/tableBody";
 import Like from "./common/like";
 
 class MoviesTable extends Component {
@@ -8,18 +9,25 @@ class MoviesTable extends Component {
     { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Stock" },
     { path: "dailyRentalRate", label: "Rate" },
-    {},
-    {}
+    {
+      content: movie => (
+        <Like isLiked={movie.isLiked} onLike={() => this.props.onLike(movie)} />
+      )
+    },
+    {
+      content: movie => (
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => this.props.onDelete(movie)}
+        >
+          Delete
+        </button>
+      )
+    }
   ];
 
   render() {
-    const {
-      moviesDisplayed,
-      onDelete,
-      onLike,
-      onSort,
-      sortColumn
-    } = this.props;
+    const { moviesDisplayed, onSort, sortColumn } = this.props;
 
     return (
       <table className="table">
@@ -28,7 +36,8 @@ class MoviesTable extends Component {
           sortColumn={sortColumn}
           onSort={onSort}
         />
-        <tbody>
+        <TableBody data={moviesDisplayed} columns={this.columns} />
+        {/* <tbody>
           {moviesDisplayed.map((movie, idx) => (
             <tr key={idx}>
               <td>{movie.title}</td>
@@ -36,19 +45,14 @@ class MoviesTable extends Component {
               <td>{movie.numberInStock}</td>
               <td>{movie.dailyRentalRate}</td>
               <td>
-                <Like isLiked={movie.isLiked} onLike={() => onLike(movie)} />
+                
               </td>
               <td>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => onDelete(movie)}
-                >
-                  Delete
-                </button>
+                
               </td>
             </tr>
           ))}
-        </tbody>
+        </tbody> */}
       </table>
     );
   }
