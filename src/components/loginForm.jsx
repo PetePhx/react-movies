@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Joi from "joi-browser";
 import Input from "./common/input";
 
 class LoginForm extends Component {
@@ -7,15 +8,27 @@ class LoginForm extends Component {
     errors: {}
   };
 
-  validate = () => {
-    const errors = {};
-    const { account } = this.state;
-    if (account.username.trim() === "")
-      errors.username = "Username is required.";
-    if (account.password.trim() === "")
-      errors.password = "Password is required.";
+  schema = {
+    username: Joi.string()
+      .required()
+      .label("Username"),
+    password: Joi.string()
+      .required()
+      .label("Password")
+  };
 
-    return Object.keys(errors).length === 0 ? null : errors;
+  validate = () => {
+    const options = { abortEarly: false };
+    const { error: err } = Joi.validate(
+      this.state.account,
+      this.schema,
+      options
+    );
+    if (!err) return null;
+
+    const errors = {};
+    err.details.forEach(item => (errors[item.path] = item.message));
+    return errors;
   };
 
   handleSubmit = e => {
@@ -24,16 +37,15 @@ class LoginForm extends Component {
     const errors = this.validate();
     this.setState({ errors: errors || {} });
     if (errors) return;
+    // call the server
+    console.log("submitted");
   };
 
   validateProperty = ({ name, value }) => {
-    if (name === "username") {
-      if (value.trim() === "") return "Username is required.";
-    }
-
-    if (name === "password") {
-      if (value.trim() === "") return "Password is required.";
-    }
+    const obj = { [name]: value };
+    const schema = { [name]: this.schema[name] };
+    const { error } = Joi.validate(obj, schema);
+    return error ? error.details[0].message : null;
   };
 
   handleChange = ({ currentTarget: input }) => {
@@ -60,7 +72,9 @@ class LoginForm extends Component {
             label="Username"
             value={account.username}
             onChange={this.handleChange}
+            type="text"
             error={errors.username}
+            autoFocus={true}
           />
           <Input
             name="password"
