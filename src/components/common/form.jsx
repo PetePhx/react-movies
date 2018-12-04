@@ -55,7 +55,7 @@ class Form extends Component {
     );
   };
 
-  renderInput = (name, label, options) => {
+  renderInput = (name, label, options = {}) => {
     const { data, errors } = this.state;
     return (
       <Input
