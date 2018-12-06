@@ -18,11 +18,15 @@ class MovieForm extends Form {
 
   componentDidMount() {
     this.setState({ genres: getGenres() });
+    if (this.props.match.url === "/movies/new") return; // no DB query
+
     const movieInDb = getMovie(this.props.match.params.id);
     if (movieInDb) {
       const data = { ...movieInDb };
       data.genre = movieInDb.genre._id;
       this.setState({ data });
+    } else {
+      this.props.history.replace("/not-found");
     }
   }
 
