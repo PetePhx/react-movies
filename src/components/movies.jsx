@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { getMovies, deleteMovie } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import ListGroup from "./common/listGroup";
@@ -107,9 +108,9 @@ class Movies extends Component {
         </div>
         <div className="col">
           {/* <button className="btn btn-primary"> */}
-          <a href="/movies/new" className="btn btn-primary m-2">
+          <Link to="/movies/new" className="btn btn-primary m-2">
             New Movie
-          </a>
+          </Link>
           {/* </button> */}
           <p>Showing {totalLength} movies:</p>
           <MoviesTable

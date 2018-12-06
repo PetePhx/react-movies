@@ -8,7 +8,7 @@ class MovieForm extends Form {
   state = {
     data: {
       title: "",
-      genre: "",
+      genreId: "",
       numberInStock: "",
       dailyRentalRate: ""
     },
@@ -16,39 +16,50 @@ class MovieForm extends Form {
     genres: []
   };
 
+  schema = {
+    _id: Joi.string(),
+    title: Joi.string()
+      .required()
+      .label("Title"),
+    genreId: Joi.string()
+      .required()
+      .label("Genre"),
+    numberInStock: Joi.number()
+      .integer()
+      .required()
+      .min(0)
+      .max(100)
+      .label("Number in Stock"),
+    dailyRentalRate: Joi.number()
+      .required()
+      .min(1)
+      .max(10)
+      .label("Rental Rate")
+  };
+
   componentDidMount() {
     this.setState({ genres: getGenres() });
     if (this.props.match.url === "/movies/new") return; // no DB query
 
     const movieInDb = getMovie(this.props.match.params.id);
-    if (movieInDb) {
-      const data = { ...movieInDb };
-      data.genre = movieInDb.genre._id;
-      this.setState({ data });
-    } else {
-      this.props.history.replace("/not-found");
-    }
+    if (!movieInDb) return this.props.history.replace("/not-found");
+
+    this.setState({ data: this.mapToViewModel(movieInDb) });
   }
 
-  schema = {
-    _id: Joi.string(),
-    title: Joi.string().required(),
-    genre: Joi.string().required(),
-    numberInStock: Joi.number()
-      .integer()
-      .required()
-      .min(0)
-      .max(100),
-    dailyRentalRate: Joi.number()
-      .required()
-      .min(1)
-      .max(10)
+  mapToViewModel = movie => {
+    return {
+      _id: movie._id,
+      title: movie.title,
+      genreId: movie.genre._id,
+      numberInStock: movie.numberInStock,
+      dailyRentalRate: movie.dailyRentalRate
+    };
   };
 
   handleSave = () => {
-    const movie = this.state.data;
-    movie.genreId = movie.genre;
-    saveMovie(movie);
+    saveMovie(this.state.data);
+
     this.props.history.push("/movies");
   };
 
@@ -63,8 +74,8 @@ class MovieForm extends Form {
         <h1>Movie Form: {this.props.match.params.id} </h1>
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("title", "Title", { autoFocus: true })}
-          {this.renderDropDownMenu(
-            "genre",
+          {this.renderSelect(
+            "genreId",
             "Genre",
             genres.map(gnr => gnr._id),
             genres.map(gnr => gnr.name)
