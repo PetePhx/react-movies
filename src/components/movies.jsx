@@ -6,6 +6,7 @@ import ListGroup from "./common/listGroup";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import MoviesTable from "./moviesTable";
+import Input from "./common/input";
 import _ from "lodash";
 
 class Movies extends Component {
@@ -13,6 +14,7 @@ class Movies extends Component {
     movies: [],
     genres: [],
     selectedGenre: null,
+    titleFilter: "",
     pageSize: 4,
     currentPage: 1,
     sortColumn: { path: "title", order: "asc" }
@@ -50,6 +52,16 @@ class Movies extends Component {
     const idx = this.state.genres.findIndex(gnr => gnr.name === genre.name);
     this.setState({
       selectedGenre: this.state.genres[idx],
+      titleFilter: "", // reset title filter
+      currentPage: 1
+    });
+  };
+
+  handleTitleFilter = ({ currentTarget: input }) => {
+    const titleFilter = input.value;
+    this.setState({
+      selectedGenre: { _id: "0", name: "All Genres" }, // reset genre selection
+      titleFilter: titleFilter,
       currentPage: 1
     });
   };
@@ -63,18 +75,27 @@ class Movies extends Component {
     return movieArr.filter(movie => movie.genre.name === selGenre.name);
   };
 
+  filterMoviesByTitle = (movieArr, titleFilter) => {
+    if (titleFilter === "") return movieArr;
+
+    const re = new RegExp(titleFilter, "i");
+    return movieArr.filter(movie => re.test(movie.title));
+  };
+
   getPagedDate = () => {
     const {
       movies,
       selectedGenre,
+      titleFilter,
       sortColumn,
       currentPage,
       pageSize
     } = this.state;
 
     const moviesOfGenre = this.filterMoviesByGenre(movies, selectedGenre);
+    const moviesOfTitle = this.filterMoviesByTitle(moviesOfGenre, titleFilter);
     const moviesSorted = _.orderBy(
-      moviesOfGenre,
+      moviesOfTitle,
       [sortColumn.path],
       [sortColumn.order]
     );
@@ -89,6 +110,7 @@ class Movies extends Component {
       currentPage,
       pageSize,
       selectedGenre,
+      titleFilter,
       sortColumn
     } = this.state;
 
@@ -107,12 +129,16 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          {/* <button className="btn btn-primary"> */}
           <Link to="/movies/new" className="btn btn-primary m-2">
             New Movie
           </Link>
-          {/* </button> */}
-          <p>Showing {totalLength} movies:</p>
+          <p className="m-0">Showing {totalLength} movies:</p>
+          <Input
+            name="search"
+            title="search"
+            value={titleFilter}
+            onChange={this.handleTitleFilter}
+          />
           <MoviesTable
             movies={movies}
             onDelete={this.handleDelete}
