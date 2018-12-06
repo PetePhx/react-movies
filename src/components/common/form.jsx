@@ -75,12 +75,13 @@ class Form extends Component {
   };
 
   renderDropDownMenu = (name, label, values, titles) => {
+    const { data } = this.state;
     return (
       <div className="form-group">
         <label htmlFor={name}>{label}</label>
         <select
           name={name}
-          defaultValue=""
+          value={data[name] || ""}
           className="form-control"
           onChange={this.handleChange}
         >

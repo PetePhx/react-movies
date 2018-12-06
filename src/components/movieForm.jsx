@@ -1,7 +1,7 @@
 import React from "react";
 import Joi from "joi-browser";
 import { getGenres } from "../services/fakeGenreService";
-import { saveMovie } from "../services/fakeMovieService";
+import { getMovie, saveMovie } from "../services/fakeMovieService";
 import Form from "./common/form";
 
 class MovieForm extends Form {
@@ -18,9 +18,16 @@ class MovieForm extends Form {
 
   componentDidMount() {
     this.setState({ genres: getGenres() });
+    const movieInDb = getMovie(this.props.match.params.id);
+    if (movieInDb) {
+      const data = { ...movieInDb };
+      data.genre = movieInDb.genre._id;
+      this.setState({ data });
+    }
   }
 
   schema = {
+    _id: Joi.string(),
     title: Joi.string().required(),
     genre: Joi.string().required(),
     numberInStock: Joi.number()
@@ -37,13 +44,11 @@ class MovieForm extends Form {
   handleSave = () => {
     const movie = this.state.data;
     movie.genreId = movie.genre;
-    const movieInDb = saveMovie(movie);
-    console.log(movieInDb);
+    saveMovie(movie);
     this.props.history.push("/movies");
   };
 
   doSubmit = () => {
-    console.log(this.state.data);
     this.handleSave();
   };
 
@@ -52,7 +57,6 @@ class MovieForm extends Form {
     return (
       <div>
         <h1>Movie Form: {this.props.match.params.id} </h1>
-
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("title", "Title", { autoFocus: true })}
           {this.renderDropDownMenu(
@@ -61,14 +65,10 @@ class MovieForm extends Form {
             genres.map(gnr => gnr._id),
             genres.map(gnr => gnr.name)
           )}
-          {this.renderInput("numberInStock", "Number in Stock", {})}
-          {this.renderInput("dailyRentalRate", "Daily Rate", {})}
+          {this.renderInput("numberInStock", "Number in Stock")}
+          {this.renderInput("dailyRentalRate", "Daily Rate")}
 
           {this.renderButton("Save")}
-
-          {/* <button className="btn btn-primary" onClick={this.handleSave}>
-            Save
-          </button> */}
         </form>
       </div>
     );
