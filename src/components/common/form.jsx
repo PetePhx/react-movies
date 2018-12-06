@@ -49,7 +49,11 @@ class Form extends Component {
 
   renderButton = label => {
     return (
-      <button disabled={!!this.validate()} className="btn btn-primary">
+      <button
+        disabled={!!this.validate()}
+        className="btn btn-primary"
+        // onClick={this.handleSubmit}
+      >
         {label}
       </button>
     );
@@ -67,6 +71,31 @@ class Form extends Component {
         type={options.type || "text"}
         autoFocus={options.autoFocus || false}
       />
+    );
+  };
+
+  renderDropDownMenu = (name, label, values, titles) => {
+    return (
+      <div className="form-group">
+        <label htmlFor={name}>{label}</label>
+        <select
+          name={name}
+          defaultValue=""
+          className="form-control"
+          onChange={this.handleChange}
+        >
+          <option value="" disabled>
+            Select one:
+          </option>
+          {values.map((val, idx) => {
+            return (
+              <option key={idx} value={val}>
+                {titles[idx]}
+              </option>
+            );
+          })}
+        </select>
+      </div>
     );
   };
 }

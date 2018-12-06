@@ -105,6 +105,11 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
+          {/* <button className="btn btn-primary"> */}
+          <a href="/movies/new" className="btn btn-primary m-2">
+            New Movie
+          </a>
+          {/* </button> */}
           <p>Showing {totalLength} movies:</p>
           <MoviesTable
             movies={movies}
