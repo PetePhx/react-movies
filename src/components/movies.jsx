@@ -6,7 +6,7 @@ import ListGroup from "./common/listGroup";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import MoviesTable from "./moviesTable";
-import Input from "./common/input";
+import SearchBox from "./common/searchBox";
 import _ from "lodash";
 
 class Movies extends Component {
@@ -20,10 +20,12 @@ class Movies extends Component {
     sortColumn: { path: "title", order: "asc" }
   };
 
+  allGenresObj = { _id: "0", name: "All Genres" };
+
   componentDidMount() {
     this.setState({
       movies: getMovies(),
-      genres: [{ _id: "0", name: "All Genres" }, ...getGenres()]
+      genres: [this.allGenresObj, ...getGenres()]
     });
 
     this.setState({ selectedGenre: { _id: 0, name: "All Genres" } });
@@ -57,10 +59,9 @@ class Movies extends Component {
     });
   };
 
-  handleTitleFilter = ({ currentTarget: input }) => {
-    const titleFilter = input.value;
+  handleSearch = titleFilter => {
     this.setState({
-      selectedGenre: { _id: "0", name: "All Genres" }, // reset genre selection
+      selectedGenre: this.allGenresObj, // reset genre selection
       titleFilter: titleFilter,
       currentPage: 1
     });
@@ -132,13 +133,8 @@ class Movies extends Component {
           <Link to="/movies/new" className="btn btn-primary m-2">
             New Movie
           </Link>
-          <p className="m-0">Showing {totalLength} movies:</p>
-          <Input
-            name="search"
-            title="search"
-            value={titleFilter}
-            onChange={this.handleTitleFilter}
-          />
+          <p className="my-2">Showing {totalLength} movies:</p>
+          <SearchBox value={titleFilter} onChange={this.handleSearch} />
           <MoviesTable
             movies={movies}
             onDelete={this.handleDelete}
