@@ -28,7 +28,7 @@ class RegisterForm extends Form {
       await userService.register(this.state.data);
     } catch (exc) {
       if (exc.response && exc.response.status === 400) {
-        const { errors } = this.state;
+        const errors = { ...this.state.errors };
         errors.username = exc.response.data;
         this.setState({ errors });
       }
