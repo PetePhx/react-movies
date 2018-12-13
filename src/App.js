@@ -22,6 +22,11 @@ class App extends Component {
     this.setState({ user });
   }
 
+  movieOrRedirect = props => {
+    if (!this.state.user) return <Redirect to="/login" />;
+    return <MovieForm {...props} />;
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -29,9 +34,12 @@ class App extends Component {
         <NavBar user={this.state.user} />
         <main className="container">
           <Switch>
-            <Route path="/movies/new" component={MovieForm} />
-            <Route path="/movies/:id" component={MovieForm} />
-            <Route path="/movies" component={Movies} />
+            <Route path="/movies/new" render={this.movieOrRedirect} />
+            <Route path="/movies/:id" render={this.movieOrRedirect} />
+            <Route
+              path="/movies"
+              render={props => <Movies {...props} user={this.state.user} />}
+            />
             <Route path="/customers" component={Customers} />
             <Route path="/rentals" component={Rentals} />
             <Route path="/login" component={LoginForm} />

@@ -126,6 +126,7 @@ class Movies extends Component {
       titleFilter,
       sortColumn
     } = this.state;
+    const { user } = this.props;
 
     if (this.state.movies.length === 0)
       return <p>There are no movies in the database!</p>;
@@ -142,9 +143,9 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <Link to="/movies/new" className="btn btn-primary m-2">
+          {user && <Link to="/movies/new" className="btn btn-primary m-2">
             New Movie
-          </Link>
+          </Link>}
           <p className="my-2">Showing {totalLength} movies:</p>
           <SearchBox value={titleFilter} onChange={this.handleSearch} />
           <MoviesTable
