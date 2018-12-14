@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Table from "./common/table.jsx";
 import Like from "./common/like";
+import auth from "../services/authService";
 
 class MoviesTable extends Component {
   columns = [
@@ -29,6 +30,12 @@ class MoviesTable extends Component {
       )
     }
   ];
+
+  constructor() {
+    super();
+    const user = auth.getCurrentUser();
+    if (!user || !user.isAdmin) this.columns.pop(); // hide the delete button
+  }
 
   render() {
     const { onSort, sortColumn, movies } = this.props;
